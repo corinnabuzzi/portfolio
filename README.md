@@ -290,6 +290,18 @@ Finally 6 random hub-to-leaf shortcuts get added for extra visual weight near th
 
 ---
 
+### v14 — projects section
+
+- `.section-placeholder` replaced with a real `.work` section: 5 project entries, each with title, year, serif description, mono tech stack, and status
+- `.work`: `max-width: 750px`, centered, `padding: 120px 24px`
+- `.project`: `border-top: 1px solid #d0cec9`, title dims to 0.7 opacity on hover
+- `.project-desc`: Lora serif, 17px, `line-height: 1.5`
+- `.project-tech`: JetBrains Mono, 12px, blue, uppercase
+- `.project-status`: gray, 13px
+- placeholder text throughout — real content to follow
+
+---
+
 ## Elements
 
 ---
