@@ -1,10 +1,14 @@
 # Personal Portfolio
 
-Author: corinna buzzi
+Author: Corinna Buzzi
+
+Deploy date:
 
 Link: corinnabuzzi.github.io/portfolio — not deployed yet.
 
-Personal portfolio site. Built from scratch with vanilla HTML, CSS, and JavaScript — no frameworks, no build tools.
+Personal portfolio site. Built from scratch with vanilla HTML, CSS, and JavaScript, no frameworks or build tools.
+
+---
 
 ## Structure
 ```
@@ -14,10 +18,13 @@ Personal portfolio site. Built from scratch with vanilla HTML, CSS, and JavaScri
 └── script.js
 ```
 
+---
+
 ## Stack
 
 - HTML/CSS/JS — no dependencies
 
+---
 
 ## Changelog
 
