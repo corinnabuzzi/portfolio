@@ -250,6 +250,20 @@ tried using maths
 
 ---
 
+### v12 — graph completely rewritten: procedural Obsidian-style
+
+biggest graph rework yet. dropped the handcrafted node/edge arrays entirely in favor of a procedural generator.
+
+- `buildGraph(cx, cy)` generates the full node + edge set at runtime — graph looks slightly different on each page load
+- three node kinds with distinct rendering: `center` (animated radial gradient glow that pulses independently), `secondary` (5 nodes, soft static glow + 85% opacity fill), `leaf` (32 nodes distributed across 4 radial bands at 130/155/172/185px)
+- edges also generated procedurally: hub→secondaries, secondaries→leaf slices + adjacent secondary ring mesh, random leaf-to-leaf connections (45% chance per pair) for silhouette fill, 6 random hub→leaf shortcuts for density
+- DPR-aware canvas: sized at physical pixels (`graphDpr = devicePixelRatio`), drawn at logical pixels via `setTransform` — fixes blurriness on retina displays
+- `elapsed`-based animation (via `performance.now()`) replaces the `time += 0.016` increment — more accurate, decoupled from frame rate
+- per-node drift now stored on the node object itself (not a separate `drifts` array)
+- graph anchor unchanged: `cx = graphW * 0.18`, `cy = graphH * 0.5`
+
+---
+
 ## Elements
 
 ---
