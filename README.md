@@ -231,6 +231,23 @@ now a very interesting and tumultuous implementation: the graph.
 
 ### v10
 
+- nodes are now 15: inner 6 nodes, mid 5, outer 3
+- inner ring now fully mesh-connected (each node connects to the next, closing the loop)
+- mid-ring partial mesh added; outer fringe nodes connected back to mid ring
+- bounding box tightened (`width * 0.26` / `height * 0.48` vs previous `0.32` / `0.55`) to keep the denser graph compact
+- drift amplitude reduced slightly to avoid jitter at higher node density
+
+---
+
+### v11 — graph coordinate system reworked to polar
+tried using maths
+
+- node definition switched from `rx/ry` fractions of a bounding box to polar coordinates (`angle` in radians, `dist` in px from center) — makes ring-based layouts much easier to reason about
+- node count up to 16: inner ring 6, mid ring 5, outer fringe 4
+- inner ring gains two cross-edges (`1→3`, `4→6`) for extra visual density
+- graph center anchored directly via `centerX = width * 0.18`, `centerY = height * 0.5` — no more `graphBox`
+- `getNodePos` simplified: polar → cartesian conversion, then breathe scale, then drift
+
 ---
 
 ## Elements
