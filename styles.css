@@ -64,56 +64,24 @@ body {
     text-align: center;
 }
 
-.word-wrap {
-    margin-bottom: 14px;
+.hero-cycling-word {
+    margin-bottom: 16px;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: default;
 }
 
-.cycling-word {
-    font-family: var(--font-sans);
+.cycling-text {
+    font-family: var(--font-mono);
     font-size: 26px;
     font-weight: 700;
     color: var(--blue);
-    letter-spacing: -0.01em;
-    line-height: 1;
+    letter-spacing: -0.5px;
+    cursor: default;
     display: inline-block;
-    opacity: 0;
-    transform: translateY(5px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.cycling-word.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.cycling-word.exit {
-    opacity: 0;
-    transform: translateY(-5px);
-}
-
-.cycling-word.decoding {
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-}
-
-.hover-cue {
-    font-family: var(--font-sans);
-    font-size: 11px;
-    color: #ccc;
-    letter-spacing: 0.5px;
-    margin-left: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    align-self: center;
-}
-
-.hover-cue.visible {
-    opacity: 1;
+    min-width: 120px;
+    text-align: center;
 }
 
 .hero-name {
@@ -158,6 +126,38 @@ body {
     opacity: 0;
     animation: fadeUp 0.6s ease forwards;
     animation-delay: 0.8s;
+}
+
+.hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text);
+    text-decoration: none;
+    padding: 12px 24px;
+    border: 1px solid var(--text);
+    border-radius: 100px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+    animation-delay: 1s;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.hero-cta:hover {
+    background: var(--text);
+    color: var(--bg);
+}
+
+.hero-cta svg {
+    transition: transform 0.25s ease;
+}
+
+.hero-cta:hover svg {
+    transform: translateY(3px);
 }
 
 @keyframes fadeUp {

@@ -1,87 +1,80 @@
 // words the cycling element rotates through
-const words   = ['syntax', 'grammar', 'structure', 'logic', 'pattern', 'parsing', 'meaning', 'rule'];
-const GLYPHS  = '0123456789ABCDEF<>=+*{}[]_';
+const words      = ['syntax', 'grammar', 'structure', 'logic', 'pattern', 'parsing', 'meaning', 'rule'];
+const cyclingEl  = document.getElementById('cyclingWord');
+const hexChars   = '0123456789ABCDEF'; // character pool for the scramble
 
-let wordIndex = 0;
-let wordTimer = null;
-let decoding  = false;
-let decodeIv  = null;
+let currentIndex   = 0;
+let isHovering     = false; // prevents cycling mid-hover
+let cycleTimer     = null;
+let activeInterval = null;
 
-const wordEl   = document.getElementById('cycling-word');
-const hoverCue = document.getElementById('hover-cue');
-
-// time-based scramble; characters resolve left-to-right as p (progress 0→1) increases
-// adds .decoding class during animation (switches font to mono in CSS)
-function decodeAnimate(el, target, onDone) {
-    const DUR   = 680;
-    const start = Date.now();
-    el.classList.add('decoding');
-
-    const iv = setInterval(() => {
-        const p   = Math.min(1, (Date.now() - start) / DUR);
-        let out   = '';
-        for (let i = 0; i < target.length; i++) {
-            const threshold = (i / target.length) * 0.8;
-            if (p >= threshold + 0.2) out += target[i];
-            else out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
-        }
-        el.textContent = out;
-        if (p >= 1) {
-            clearInterval(iv);
-            el.classList.remove('decoding');
-            el.textContent = target;
-            if (onDone) onDone();
-        }
-    }, 40);
-
-    return iv;
-}
-
-// sets word text and triggers CSS fade-in
-// double rAF needed to let the browser register class removal before re-adding
-function showWord(el, word) {
-    el.classList.remove('exit');
-    el.textContent = word;
-    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
-}
-
-// slides current word out, waits 380ms (exit transition), then shows next
-function nextWord() {
-    if (decoding) return;
-    wordEl.classList.add('exit');
-    wordEl.classList.remove('visible');
-    setTimeout(() => {
-        wordIndex = (wordIndex + 1) % words.length;
-        showWord(wordEl, words[wordIndex]);
-    }, 380);
-}
-
-// on hover: decode current word to hex ASCII, hold 400ms, decode back
-wordEl.parentElement.addEventListener('mouseenter', () => {
-    if (!wordEl.classList.contains('visible') || decoding) return;
-    decoding = true;
-    hoverCue.classList.remove('visible');
-
-    const currentWord = words[wordIndex];
-    const hexTarget   = [...currentWord]
-        .map(c => c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0'))
+function toHexAscii(word) {
+    return Array.from(word)
+        .map(c => c.charCodeAt(0).toString(16).toUpperCase())
         .join(' ');
+}
 
-    decodeIv = decodeAnimate(wordEl, hexTarget, () => {
-        setTimeout(() => {
-            decodeIv = decodeAnimate(wordEl, currentWord, () => {
-                decoding = false;
-                hoverCue.classList.add('visible');
-            });
-        }, 400);
+// step-based scramble (contrast with decodeAnimate in v7 which was time-based)
+// reveals characters left-to-right as iterations increase
+function scrambleTo(target, finalText, callback) {
+    if (activeInterval) clearInterval(activeInterval);
+    const finalLen   = finalText.length;
+    let iterations   = 0;
+    const totalSteps = 10 + finalLen;
+
+    activeInterval = setInterval(() => {
+        let display = '';
+        for (let i = 0; i < finalLen; i++) {
+            const revealAt = totalSteps - finalLen + i; // left-to-right reveal threshold
+            if (iterations >= revealAt) {
+                display += finalText[i];
+            } else {
+                display += hexChars[Math.floor(Math.random() * hexChars.length)];
+            }
+        }
+        target.textContent = display;
+        iterations++;
+
+        if (iterations > totalSteps) { // snap to final string and fire callback
+            clearInterval(activeInterval);
+            activeInterval = null;
+            target.textContent = finalText;
+            if (callback) callback();
+        }
+    }, 35);
+}
+
+function startCycleTimer() {
+    stopCycleTimer();
+    cycleTimer = setInterval(() => {
+        if (isHovering) return;
+        currentIndex = (currentIndex + 1) % words.length;
+        scrambleTo(cyclingEl, words[currentIndex], null);
+    }, 2200);
+}
+
+function stopCycleTimer() {
+    if (cycleTimer) {
+        clearInterval(cycleTimer);
+        cycleTimer = null;
+    }
+}
+
+// on mouseenter: scramble to hex ASCII and stop cycling
+// on mouseleave: scramble back to the word, then resume cycling
+cyclingEl.addEventListener('mouseenter', () => {
+    isHovering = true;
+    stopCycleTimer();
+    if (activeInterval) { clearInterval(activeInterval); activeInterval = null; }
+    scrambleTo(cyclingEl, toHexAscii(words[currentIndex]), null);
+});
+
+cyclingEl.addEventListener('mouseleave', () => {
+    if (activeInterval) { clearInterval(activeInterval); activeInterval = null; }
+    scrambleTo(cyclingEl, words[currentIndex], () => {
+        isHovering = false;
+        startCycleTimer();
     });
 });
 
-// start cycling immediately on load
-setTimeout(() => {
-    showWord(wordEl, words[0]);
-    hoverCue.classList.add('visible');
-    setTimeout(() => {
-        wordTimer = setInterval(nextWord, 2200);
-    }, 2400);
-}, 200);
+startCycleTimer();

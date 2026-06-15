@@ -7,9 +7,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Lora:ital,wght@0,400;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Lora:ital,wght@0,400;1,400&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -23,9 +23,8 @@
 
     <section class="hero">
         <div class="hero-content">
-            <div class="word-wrap">
-                <span class="cycling-word" id="cycling-word"></span>
-                <span class="hover-cue" id="hover-cue">hover to decode</span>
+            <div class="hero-cycling-word">
+                <span class="cycling-text" id="cyclingWord">syntax</span>
             </div>
 
             <h1 class="hero-name">
@@ -35,7 +34,14 @@
 
             <p class="hero-role">junior software developer</p>
 
-            <p class="hero-tagline">Building at the intersection of language and code.</p>
+            <p class="hero-tagline">Building things that make sense.</p>
+
+            <a href="#work" class="hero-cta">
+                <span>See my work</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
         </div>
     </section>
 
@@ -43,6 +49,6 @@
         <p>Content goes here</p>
     </section>
 
-    <script src="./script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
