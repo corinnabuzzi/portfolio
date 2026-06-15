@@ -14,8 +14,12 @@ Personal portfolio site. Built from scratch with vanilla HTML, CSS, and JavaScri
 
 ## Stack
 
-- HTML/CSS/JS — no dependencies
+- HTML/CSS/JS
 
+**No dependencies!**
+
+- **Google Fonts:** Inter (400, 700), Lora (400, 400 italic), JetBrains Mono (400, 700)
+- **No JavaScript libraries.** The d3-force approach was tested in v5 and discarded. The final graph is pure vanilla JS with `requestAnimationFrame` and Canvas 2D API.
 
 ## Changelog
 
