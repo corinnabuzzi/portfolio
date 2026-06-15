@@ -1,46 +1,67 @@
 *, *::before, *::after {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg:         #f6f4ef;
+    --text:       #111;
+    --blue:       #0000FF;
+    --gray:       #888;
+    --font-sans:  'Inter', sans-serif;
+    --font-serif: 'Lora', serif;
+    --font-mono:  'JetBrains Mono', monospace;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    background: #f6f4ef;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 60px 64px;
-    font-family: 'Inter', sans-serif;
-    position: relative;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
 }
 
-.hp-nav {
+.nav {
     position: fixed;
-    top: 40px;
-    right: 64px;
+    top: 0;
+    right: 0;
+    padding: 24px 48px;
+    z-index: 100;
+}
+
+.nav-links {
+    list-style: none;
     display: flex;
     gap: 32px;
-    opacity: 0;
-    transition: opacity 0.6s ease;
 }
 
-.hp-nav.visible {
-    opacity: 1;
-}
-
-.hp-nav a {
-    font-family: 'Inter', sans-serif;
+.nav-links a {
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 1.2px;
     text-transform: uppercase;
-    color: #111;
+    color: var(--text);
     text-decoration: none;
+    transition: color 0.2s;
 }
 
-.hp-nav a:hover {
-    color: #0000FF;
+.nav-links a:hover {
+    color: var(--blue);
+}
+
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content {
+    text-align: center;
 }
 
 .word-wrap {
@@ -48,14 +69,15 @@ body {
     height: 36px;
     display: flex;
     align-items: center;
+    justify-content: center;
     cursor: default;
 }
 
 .cycling-word {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 26px;
     font-weight: 700;
-    color: #0000FF;
+    color: var(--blue);
     letter-spacing: -0.01em;
     line-height: 1;
     display: inline-block;
@@ -75,12 +97,12 @@ body {
 }
 
 .cycling-word.decoding {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     letter-spacing: 0.05em;
 }
 
 .hover-cue {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 11px;
     color: #ccc;
     letter-spacing: 0.5px;
@@ -94,30 +116,34 @@ body {
     opacity: 1;
 }
 
-.hp-name-wrap {
-    margin-bottom: 8px;
+.hero-name {
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
 }
 
-.hp-name {
-    font-family: 'Inter', sans-serif;
-    font-size: 52px;
-    font-weight: 700;
-    color: #111;
-    line-height: 1.0;
+.name-line {
     display: block;
     clip-path: inset(0 100% 0 0);
-    transition: clip-path 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: revealName 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
-.hp-name.revealed {
-    clip-path: inset(0 0% 0 0);
+.name-line:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+@keyframes revealName {
+    to { clip-path: inset(0 0% 0 0); }
 }
 
 .hp-role {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans);
     font-size: 17px;
     font-weight: 400;
-    color: #888;
+    color: var(--gray);
     display: block;
     opacity: 0;
     transform: translateY(5px);
@@ -131,10 +157,10 @@ body {
 }
 
 .hp-tagline {
-    font-family: 'Lora', Georgia, serif;
+    font-family: var(--font-serif);
     font-size: 17px;
     line-height: 1.65;
-    color: #111;
+    color: var(--text);
     max-width: 480px;
     opacity: 0;
     transform: translateY(8px);
@@ -146,22 +172,13 @@ body {
     transform: translateY(0);
 }
 
-@media (max-width: 600px) {
-    body {
-        padding: 40px 28px;
-    }
-
-    .hp-name {
-        font-size: 36px;
-    }
-
-    .cycling-word {
-        font-size: 22px;
-    }
-
-    .hp-nav {
-        top: 28px;
-        right: 28px;
-        gap: 20px;
-    }
+.section-placeholder {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #bbb;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }

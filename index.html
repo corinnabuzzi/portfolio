@@ -7,36 +7,43 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Lora:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Lora:ital,wght@0,400;1,400&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="./styles.css">
 </head>
-
 <body>
 
-    <nav class="hp-nav" id="nav">
-        <a href="https://github.com/corinnabuzzi" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://www.linkedin.com/in/corinna-buzzi" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="#" target="_blank">Projects</a>
-        <a href="./contact.html">Contact</a>
+    <nav class="nav">
+        <ul class="nav-links">
+            <li><a href="#work">Work</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
     </nav>
 
-    <main class="hp-stage">
-        <div class="word-wrap">
-            <span class="cycling-word" id="cycling-word"></span>
-            <span class="hover-cue" id="hover-cue">hover to decode</span>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="word-wrap">
+                <span class="cycling-word" id="cycling-word"></span>
+                <span class="hover-cue" id="hover-cue">hover to decode</span>
+            </div>
+
+            <h1 class="hero-name" id="name">
+                <span class="name-line">Corinna</span>
+                <span class="name-line">Buzzi</span>
+            </h1>
+
+            <span class="hp-role" id="role">junior software developer</span>
+
+            <p class="hp-tagline" id="tagline">
+                Building at the intersection of language and code.
+            </p>
         </div>
+    </section>
 
-        <div class="hp-name-wrap">
-            <span class="hp-name" id="name">Corinna Buzzi</span>
-        </div>
-
-        <span class="hp-role" id="role">junior software developer</span>
-
-        <p class="hp-tagline" id="tagline">
-            Building at the intersection of language and code.
-        </p>
-    </main>
+    <section id="work" class="section-placeholder">
+        <p>Content goes here</p>
+    </section>
 
     <script src="./script.js"></script>
 </body>
