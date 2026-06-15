@@ -41,3 +41,30 @@ body {
     max-width: 520px;
 }
 
+.footer {
+    position: fixed;
+    bottom: 40px;
+    left: 64px;
+}
+
+.contact-links {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.contact-links a {
+    color: #111;
+    text-decoration: none;
+}
+
+.contact-links a:hover {
+    color: #0000FF;
+}
+
+.separator {
+    margin: 0 10px;
+    color: #bbb;
+}
