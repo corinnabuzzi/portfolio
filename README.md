@@ -278,6 +278,15 @@ Then each secondary also connects to the next secondary in the ring, so the 5 se
 
 Finally 6 random hub-to-leaf shortcuts get added for extra visual weight near the center.
 
+---
+
+### v13 — hero goes left-aligned, graph moves right, graph grows bigger
+
+- hero layout: `justify-content: center` → `flex-start`; `.hero-content` gains `text-align: left` and `padding-left: 8vw`
+- `.hero-cycling-word` drops `justify-content: center` — word now left-aligned with the rest of the content
+- `.hero-graph` starts hidden (`opacity: 0`) and fades in via `@keyframes graphFadeIn` (1.2s, 0.3s delay) — gives the page a moment to settle before the graph appears
+- graph anchor moved from left (`0.18`) to right (`0.68`) so it sits opposite the text
+- graph scaled up significantly: `secondaryRadius` 80 → 140, `leafBands` [130, 155, 172, 185] → [220, 260, 290, 315], hard cap 195 → 330
 
 ---
 
