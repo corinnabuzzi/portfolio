@@ -156,11 +156,24 @@ experimented with replacing the "software dev" subtitle to 3 different words, cy
 
 ---
 
-### v7a
+v7 is a complete redesign, and a significant direction change (which i'll then take back). The mono block, morph glitch, and roles stack are all dropped in favor of a new interaction centred on a single cycling word above the name.
 
-### v7b
+### v7a — removed mono block and roles stack
 
-### v7c
+- dropped `#mono-block`, `.roles-stack`, all related css and js
+- replaced roles stack with single static `.hp-role` span — leaves the page temporarily without anything above the name
+
+### v7b — cycling word + hover decode interaction
+
+- added `.word-wrap`, `#cycling-word`, `#hover-cue` to html
+- updated css with all cycling word styling (`.cycling-word`, `.hover-cue`, `.decoding state`)
+- once again, full script.js rewrite: words, GLYPHS, decodeAnimate, showWord, nextWord, hover logic
+
+### v7c — timing and layout adjustments
+
+- faster entrance sequence (word 200ms, name 900ms, etc.)
+-`.hp-name-wrap` margin to 8px, `.hp-tagline` max-width/line-height tweak
+- nav transition from 0.5s to 0.6s — makes a difference!
 
 ---
 
