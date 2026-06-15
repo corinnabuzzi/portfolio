@@ -43,8 +43,59 @@ body {
     color: #0000FF;
 }
 
+.word-wrap {
+    margin-bottom: 14px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    cursor: default;
+}
+
+.cycling-word {
+    font-family: 'Inter', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #0000FF;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.cycling-word.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cycling-word.exit {
+    opacity: 0;
+    transform: translateY(-5px);
+}
+
+.cycling-word.decoding {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+}
+
+.hover-cue {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: #ccc;
+    letter-spacing: 0.5px;
+    margin-left: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    align-self: center;
+}
+
+.hover-cue.visible {
+    opacity: 1;
+}
+
 .hp-name-wrap {
-    margin-bottom: 16px;
+    margin-bottom: 8px;
 }
 
 .hp-name {
@@ -82,9 +133,9 @@ body {
 .hp-tagline {
     font-family: 'Lora', Georgia, serif;
     font-size: 17px;
-    line-height: 1.6;
+    line-height: 1.65;
     color: #111;
-    max-width: 520px;
+    max-width: 480px;
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 0.6s ease, transform 0.6s ease;
@@ -102,6 +153,10 @@ body {
 
     .hp-name {
         font-size: 36px;
+    }
+
+    .cycling-word {
+        font-size: 22px;
     }
 
     .hp-nav {
