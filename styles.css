@@ -58,7 +58,7 @@ body {
     height: 100vh;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     overflow: hidden;
 }
 
@@ -69,12 +69,20 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
+    opacity: 0;
+    animation: graphFadeIn 1.2s ease forwards;
+    animation-delay: 0.3s;
+}
+
+@keyframes graphFadeIn {
+    to { opacity: 1; }
 }
 
 .hero-content {
     position: relative;
     z-index: 1;
-    text-align: center;
+    text-align: left;
+    padding-left: 8vw;
 }
 
 .hero-cycling-word {
@@ -82,7 +90,6 @@ body {
     height: 36px;
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 .cycling-text {
