@@ -8,8 +8,10 @@ Personal portfolio site. Built from scratch with vanilla HTML, CSS, and JavaScri
 
 ## Structure
 ```
+├── assets/
 ├── index.html
-└── styles.css
+├── styles.css
+└── script.js
 ```
 
 ## Stack
