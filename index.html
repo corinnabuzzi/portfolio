@@ -7,36 +7,36 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Lora:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
 
-    <main>
-        <div class="mono-block">
-            <div><span>parsing </span><span class="blue">natural_language</span><span>.morphology</span></div>
-            <div><span>mapping </span><span class="blue">syntax_tree</span><span> → </span><span class="blue">ast</span></div>
-            <div><span>found: </span><span class="blue">convergence</span><span>(linguistics, cs)</span></div>
-            <div><span class="blue">resolve</span><span>(</span><span class="blue">"Corinna Buzzi"</span><span>) →</span></div>
+    <nav class="hp-nav" id="nav">
+        <a href="https://github.com/corinnabuzzi" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/corinna-buzzi" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="#" target="_blank">Projects</a>
+        <a href="./contact.html">Contact</a>
+    </nav>
+
+    <main class="hp-stage">
+        <div id="mono-lines"></div>
+
+        <div class="hp-name-wrap">
+            <span class="hp-name" id="name">Corinna Buzzi</span>
         </div>
-        <span class="hp-name">Corinna Buzzi</span>
-        <span class="hp-role">Junior Software Developer</span>
-        <p class="hp-tagline">Building at the intersection of language and code.</p>
+
+        <div class="hp-role-wrap">
+            <span class="hp-role" id="role"></span>
+        </div>
+
+        <p class="hp-tagline" id="tagline">
+            Building at the intersection of language and code.
+        </p>
     </main>
 
-    <footer class="footer">
-        <p class="contact-links">
-            <a href="https://github.com/corinnabuzzi" target="_blank" rel="noopener">GitHub</a>
-            <span class="separator">·</span>
-            <a href="https://www.linkedin.com/in/corinna-buzzi" target="_blank" rel="noopener">LinkedIn</a>
-            <span class="separator">·</span>
-            <a href="#" target="_blank">Projects</a>
-            <span class="separator">·</span>
-            <a href="./contact.html">Contact</a>
-        </p>
-    </footer>
-    
+    <script src="./script.js"></script>
 </body>
 </html>
