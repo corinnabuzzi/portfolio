@@ -104,3 +104,8 @@ here I found out more direction in terms of design.
 
 ### Palette
 
+![palette-card](assets/palette-card.png)
+
+**Background**: warm off-white, papery
+**Text**: near-black, inky-looking. 
+**Accent**: pure blue. i love it, and it really works when used sparingly
