@@ -137,6 +137,33 @@ experimented with replacing the "software dev" subtitle to 3 different words, cy
 
 ---
 
+### v6 —single cycling role replaced by stack
+
+**index.html**
+
+- `.hp-role-wrap` / `#role` single element replaced with `.roles-stack` / `#roles-stack` containing three static `.role-item` spans: "junior software developer", "former linguistics student", "learning in public"
+
+**styles.css**
+
+- `.hp-role-wrap` and `.hp-role` / `.hp-role.exit` removed
+- `.hp-cursor` and `@keyframes blink` removed
+- `.roles-stack`: flex column, `gap: 2px`, `margin-bottom: 32px`
+- added `.role-item`: starts `opacity: 0`, `translateY(6px)`; fades in via `.visible`; `.active` sets `color: #0000FF` + `font-weight: 600`; `.inactive` sets `color: #bbb` + `font-weight: 400`
+
+**script.js**
+
+- full role logic rewritten: instead of cycling a single element's text, all three `.role-item` elements are faded in together at 2100ms, first marked `.active`, rest `.inactive`; `setInterval` every 2000ms advances the active item forward through the list indefinitely
+
+---
+
+### v7a
+
+### v7b
+
+### v7c
+
+---
+
 ## Design overview
 
 ### Palette
