@@ -262,6 +262,23 @@ biggest graph rework yet. dropped the handcrafted node/edge arrays entirely in f
 - per-node drift now stored on the node object itself (not a separate `drifts` array)
 - graph anchor unchanged: `cx = graphW * 0.18`, `cy = graphH * 0.5`
 
+**procedural generator:** the core idea is that, instead of writing out every node position and edge by hand, `buildGraph` crafts the full grpah from certain parameters.
+
+goal: hybrid between an Obsidian style graph and the spokes of a bicycle wheel.
+
+3 stages: 
+
+- first it puts the hub at the exact center; 
+- then it places 5 secondary nodes by evenly dividing a full rotation into angles and adding a small random radius jitter, so that they sit roughly in a ring but not mechanically so. 
+- then it places 32 leaf nodes by cycling through 4 radial bands (130, 155, 172, 185px) and distributing them evenly around the full circle with a tiny angle jitter per node. There's a hard cap at 195px so nothing escapes too far and extends too much.
+
+edges, very similar: hub gets a spoke to each secondary. which, in turn, "owns" a slice of the leaf ring — roughly `leafCount` divided by `secondaryCount` leaves each, just consecutive chunks going around the circle. It connects to all the leaves in its slice. 
+
+Then each secondary also connects to the next secondary in the ring, so the 5 secondary nodes end up forming a pentagon of edges between themselves.Then there's a random pass over all leaf pairs (each consecutive pair has a 45% chance of getting an edge) which is what creates the dense silhouette fill rather than a sparse star pattern. 
+
+Finally 6 random hub-to-leaf shortcuts get added for extra visual weight near the center.
+
+
 ---
 
 ## Elements
