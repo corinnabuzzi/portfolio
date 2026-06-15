@@ -1,110 +1,43 @@
-* {
+*, *::before, *::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
 }
 
 body {
-    background-color: #f6f4ef;
-    color: #111;
-    font-family: 'Lora', Georgia, serif;
-    font-size: 18px;
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    background: #f6f4ef;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 64px;
+    font-family: 'Inter', sans-serif;
 }
 
-.container {
-    max-width: 750px;
-    margin: 0 auto;
-    padding: 60px 30px 40px;
-}
-
-
-.header {
-    margin-bottom: 80px;
-}
-
-.name {
-    font-family: 'Inter', 'Helvetica Neue', sans-serif;
-    font-size: 48px;
+.hp-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 52px;
     font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 8px;
     color: #111;
+    line-height: 1.0;
+    display: block;
 }
 
-.job-title {
-    margin-bottom: 24px;
+.hp-role {
+    display: block;
+    margin-top: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: #0000FF;
 }
 
-.intro-text {
-    font-size: 20px;
+.hp-tagline {
+    margin-top: 32px;
+    font-family: 'Lora', Georgia, serif;
+    font-size: 17px;
     line-height: 1.6;
     color: #111;
-    max-width: 650px;
+    max-width: 520px;
 }
 
-.blue-text {
-    color: #0000FF;
-    text-decoration: none;
-}
-
-.footer {
-    margin-top: 100px;
-    padding-top: 30px;
-    border-top: 1px solid #d0cec9;
-    text-align: center;
-}
-
-.footer p {
-    font-family: 'Inter', 'Helvetica Neue', sans-serif;
-    font-size: 14px;
-    color: #888;
-}
-
-.contact-links a {
-    color: #0000FF;
-    text-decoration: none;
-}
-
-.contact-links a:hover {
-    text-decoration: underline;
-}
-
-.separator {
-    color: #888;
-    margin: 0 8px;
-}
-
-.about-content p {
-    margin-bottom: 20px;
-}
-
-.about-content p:last-child {
-    margin-bottom: 0;
-}
-
-.section {
-    margin-bottom: 80px;
-}
-
-.section-label {
-    font-family: 'Inter', 'Helvetica Neue', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #111;
-    margin-bottom: 16px;
-}
-
-.section-divider {
-    border: none;
-    border-top: 1px solid #d0cec9;
-    margin-bottom: 40px;
-}
