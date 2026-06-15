@@ -177,6 +177,47 @@ v7 is a complete redesign, and a significant direction change (which i'll then t
 
 ---
 
+### v8 — centered hero, new layout architecture (another direction change)
+
+v7's left-aligned single-page layout dropped in favor of a centered hero with a scrollable work section below. also the first version with CSS custom properties throughout.
+
+### v8a — layout and structure overhaul
+
+- body goes from flex-centered to plain block flow
+- hero becomes `<section class="hero">` with centered `<div class="hero-content">`
+- name split into two `.name-line` spans inside `<h1 class="hero-name">` for per-line animation
+- nav restructured to `<ul class="nav-links">` with Work, About, Contact
+- `<section id="work" class="section-placeholder">` added below hero
+- CSS variables (`:root`) introduced; all hardcoded values migrated
+- name bumped to 72px, `letter-spacing: -2px`
+
+### v8b — animations moved from JS to CSS
+
+- name reveal now fires automatically via `@keyframes revealName` + `animation-delay` on `.name-line:nth-child(2)` — no JS needed
+- role, tagline animate in via `@keyframes fadeUp` with `animation-delay` (0.6s, 0.8s)
+- `runSequence()` removed entirely; nav no longer starts hidden
+- hover cue removed from html
+
+### v8c — cycling word rework + CTA pill
+
+- cycling word renamed `#cyclingWord` / `.cycling-text`, now JetBrains Mono
+- `decodeAnimate` replaced with `scrambleTo` — step-based instead of time-based
+- hover now on the element itself (`mouseenter`/`mouseleave`) rather than parent wrapper; mouseleave scrambles back to the word then resumes cycling
+- `startCycleTimer` / `stopCycleTimer` replace inline interval management
+- CTA added: `border: 1px solid var(--text)`, `border-radius: 100px`, fills on hover
+
+---
+
+now a very interesting and tumultuous implementation: the graph.
+
+### v9 —
+
+---
+
+## Elements
+
+---
+
 ## Design overview
 
 ### Palette
