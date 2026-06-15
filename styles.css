@@ -195,3 +195,54 @@ body {
         bottom: 28px;
     }
 }
+
+.word-wrap {
+    margin-bottom: 14px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    cursor: default;
+}
+
+.cycling-word {
+    font-family: 'Inter', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #0000FF;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.cycling-word.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cycling-word.exit {
+    opacity: 0;
+    transform: translateY(-5px);
+}
+
+.cycling-word.decoding {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+}
+
+.hover-cue {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: #ccc;
+    letter-spacing: 0.5px;
+    margin-left: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    align-self: center;
+}
+
+.hover-cue.visible {
+    opacity: 1;
+}

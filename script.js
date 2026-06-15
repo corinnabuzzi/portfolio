@@ -1,149 +1,117 @@
-// const holding characters that the tokens in the mono block morph *into* after glitch animation
-const CHARS = 'abcdefghijklmnopqrstuvwxyz_()→.';
+// words the cycling element rotates through
+const words   = ['syntax', 'grammar', 'structure', 'logic', 'pattern', 'parsing', 'meaning', 'rule'];
+const GLYPHS  = '0123456789ABCDEF<>=+*{}[]_'; // character pool for the decode scramble (hex-ish on purpose)
 
-// an array of arrays! 4, one per line of the mono block. 
-// inner arrays broken into **tokens**, the chunks of text that need to be independently rteferenced for styling or animation
-// each token 3 properities: text - displayed; cls - color class; morphTo - if present this token glitches into that string
-const lineData = [
-    [
-        { text: 'reading',          cls: 'blue', morphsTo: 'parsing'      },
-        { text: '(',                cls: 'dim'                             },
-        { text: 'natural_language', cls: 'blue', morphsTo: 'morphology'   },
-        { text: ')',                cls: 'dim'                             },
-    ],
-    [
-        { text: 'grammar',          cls: 'blue', morphsTo: 'syntax_tree'  },
-        { text: ' → ',              cls: 'dim'                             },
-        { text: 'meaning',          cls: 'blue', morphsTo: 'structure'    },
-    ],
-    [
-        { text: 'found:',           cls: 'dim'                             },
-        { text: ' convergence',     cls: 'blue', morphsTo: ' pattern'     },
-        { text: '(linguistics',     cls: 'dim'                             },
-        { text: ', cs)',            cls: 'dim'                             },
-    ],
-    [
-        { text: 'resolve',          cls: 'blue'                            },
-        { text: '(',                cls: 'dim'                             },
-        { text: '"Corinna Buzzi"',  cls: 'blue'                            },
-        { text: ') →',              cls: 'dim'                             },
-    ],
-];
+let wordIndex = 0;
+let wordTimer = null;
+let decoding  = false; // prevents hover trigger mid-animation
+let decodeIv  = null;
 
-const MORPH_DELAY    = 2200; 
-const MORPH_DURATION = 600;
-const MORPH_STEPS    = 12;
+const wordEl   = document.getElementById('cycling-word');
+const hoverCue = document.getElementById('hover-cue'); // the "hover to decode" label
 
-// glitchText makes scramble animation (=word made of random characters that progressively stick and lock into the real letters; left to right)
-// the `setInterval` fires `steps` times over `duration` milliseconds
-//for each `i`, check charactert progress. yes? show the real character, no? show a random one from CHARS 
-function glitchText(el, targetText, duration, steps) {
-    let step = 0;
+// time-based scramble (contrast with glitchText which is step-based)
+// p = progress 0→1 over DUR ms; characters resolve left-to-right as p increases
+// adds .decoding class during animation (switches font to mono in CSS)
+function decodeAnimate(el, target, onDone) {
+    const DUR   = 680;
+    const start = Date.now();
+    el.classList.add('decoding');
+
     const iv = setInterval(() => {
-        step++;
-        const progress = step / steps;
-        const chars = targetText.split('').map((ch, i) => {
-            if (progress > i / targetText.length + 0.2) return ch; // this is the "left to right"
-            if (' ()→."_:,'.includes(ch)) return ch;
-            return CHARS[Math.floor(Math.random() * CHARS.length)];
-        });
-        el.textContent = chars.join('');
-        if (step >= steps) { // interval clears itself as error management 
-            clearInterval(iv);
-            el.textContent = targetText;
+        const p   = Math.min(1, (Date.now() - start) / DUR);
+        let out   = '';
+        for (let i = 0; i < target.length; i++) {
+            const threshold = (i / target.length) * 0.8;
+            if (p >= threshold + 0.2) out += target[i]; // this character is ready to lock in
+            else out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
         }
-    }, duration / steps);
+        el.textContent = out;
+        if (p >= 1) { // done — snap to final string and fire callback
+            clearInterval(iv);
+            el.classList.remove('decoding');
+            el.textContent = target;
+            if (onDone) onDone();
+        }
+    }, 40);
+
+    return iv; // returned so it can be cleared externally if needed (e.g. on reset)
 }
 
-// replays the glitch on mouse hover of the parent .mono-line
-function attachHoverGlitch(el, text) {
-    let running = false; // ruynning = prevents retrigger midway
-    el.closest('.mono-line').addEventListener('mouseenter', () => {
-        if (running) return;
-        running = true;
-        glitchText(el, text, 400, 10);
-        setTimeout(() => { running = false; }, 600);
+// sets word text and triggers the CSS fade-in transition
+// double rAF needed to let the browser register the class removal before re-adding
+function showWord(el, word) {
+    el.classList.remove('exit');
+    el.textContent = word;
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
+}
+
+// slides current word out, waits 380ms (exit transition), then shows next
+function nextWord() {
+    if (decoding) return; // don't cycle mid-hover
+    wordEl.classList.add('exit');
+    wordEl.classList.remove('visible');
+    setTimeout(() => {
+        wordIndex = (wordIndex + 1) % words.length;
+        showWord(wordEl, words[wordIndex]);
+    }, 380);
+}
+
+// on hover: decode current word to its hex ASCII representation, hold, then decode back
+// e.g. 'syntax' → '73 79 6E 74 61 78' → 'syntax'
+wordEl.parentElement.addEventListener('mouseenter', () => {
+    if (!wordEl.classList.contains('visible') || decoding) return;
+    decoding = true;
+    hoverCue.classList.remove('visible');
+
+    const currentWord = words[wordIndex];
+    const hexTarget   = [...currentWord]
+        .map(c => c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0'))
+        .join(' ');
+
+    decodeIv = decodeAnimate(wordEl, hexTarget, () => {
+        setTimeout(() => { // 400ms hold on the hex before decoding back
+            decodeIv = decodeAnimate(wordEl, currentWord, () => {
+                decoding = false;
+                hoverCue.classList.add('visible');
+            });
+        }, 400);
     });
-}
+});
 
-const roles = [
-    'junior software developer',
-    'former linguistics student',
-    'learning in public',
-];
-
-let roleIndex = 0;
-let roleCycle = null;
-
+// reset + orchestrate the entrance sequence
 function runSequence() {
-    const container = document.getElementById('mono-lines');
+    if (wordTimer) clearInterval(wordTimer);
+    if (decodeIv)  clearInterval(decodeIv);
+
+    wordIndex = 0;
+    decoding  = false;
+
     const nameEl    = document.getElementById('name');
     const roleEl    = document.getElementById('role');
     const taglineEl = document.getElementById('tagline');
     const navEl     = document.getElementById('nav');
 
-    // case management!! reset before rerunning in case of replay added later
-    container.innerHTML = '';
+    // reset all animated elements before running
+    wordEl.classList.remove('visible', 'exit', 'decoding');
+    wordEl.textContent = '';
+    hoverCue.classList.remove('visible');
     nameEl.classList.remove('revealed');
-    roleEl.classList.remove('visible', 'exit');
-    roleEl.textContent = '';
+    roleEl.classList.remove('visible');
     taglineEl.classList.remove('visible');
     navEl.classList.remove('visible');
 
-    if (roleCycle) clearInterval(roleCycle);
-    roleIndex = 0;
-
-    // static html is a problem — dynamically builds so morph can reference DOM 
-    lineData.forEach((tokens, li) => {
-        const line = document.createElement('div');
-        line.className = 'hp-mono mono-line';
-
-        tokens.forEach(tok => {
-            const span = document.createElement('span');
-            span.className = 'token ' + (tok.cls || '');
-            span.textContent = tok.text;
-            line.appendChild(span);
-
-            if (tok.morphsTo) {
-                // glitch to final word + hover replay after dekay
-                setTimeout(() => {
-                    glitchText(span, tok.morphsTo, MORPH_DURATION, MORPH_STEPS);
-                    setTimeout(() => attachHoverGlitch(span, tok.morphsTo), MORPH_DURATION + 100);
-                }, MORPH_DELAY + li * 80); // avoids firing together all at once
-            } else {
-                setTimeout(() => {
-                    attachHoverGlitch(span, tok.text);
-                }, MORPH_DELAY + MORPH_DURATION + 200);
-            }
-        });
-
-        container.appendChild(line);
-        // 260ms interval
-        setTimeout(() => line.classList.add('visible'), li * 260 + 150);
-    });
-
-    // reveals name left to right
-    setTimeout(() => nameEl.classList.add('revealed'), 1700);
-
-    // cycling through role array
+    setTimeout(() => showWord(wordEl, words[0]),          200);
+    setTimeout(() => nameEl.classList.add('revealed'),    900);
+    setTimeout(() => roleEl.classList.add('visible'),    1400);
+    setTimeout(() => taglineEl.classList.add('visible'), 1800);
     setTimeout(() => {
-        roleEl.textContent = roles[0];
-        roleEl.classList.add('visible');
-
-        roleCycle = setInterval(() => {
-            roleEl.classList.add('exit');
-            setTimeout(() => {
-                roleIndex = (roleIndex + 1) % roles.length;
-                roleEl.textContent = roles[roleIndex];
-                roleEl.classList.remove('exit');
-                roleEl.classList.add('visible');
-                if (roleIndex === roles.length - 1) clearInterval(roleCycle);
-            }, 300);
-        }, 1600);
-    }, 2100);
-
-    setTimeout(() => taglineEl.classList.add('visible'), 2500);
-    setTimeout(() => navEl.classList.add('visible'), 3000);
+        navEl.classList.add('visible');
+        hoverCue.classList.add('visible');
+    }, 2200);
+    setTimeout(() => {
+        wordTimer = setInterval(nextWord, 2200); // start cycling after everything's settled
+    }, 2600);
 }
 
 runSequence();
