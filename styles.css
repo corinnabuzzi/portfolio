@@ -75,3 +75,36 @@ body {
 .contact-links a:hover {
     text-decoration: underline;
 }
+
+.separator {
+    color: #888;
+    margin: 0 8px;
+}
+
+.about-content p {
+    margin-bottom: 20px;
+}
+
+.about-content p:last-child {
+    margin-bottom: 0;
+}
+
+.section {
+    margin-bottom: 80px;
+}
+
+.section-label {
+    font-family: 'Inter', 'Helvetica Neue', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 16px;
+}
+
+.section-divider {
+    border: none;
+    border-top: 1px solid #d0cec9;
+    margin-bottom: 40px;
+}
