@@ -43,33 +43,6 @@ body {
     color: #0000FF;
 }
 
-.mono-block {
-    margin-bottom: 28px;
-}
-
-.mono-line {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12.5px;
-    color: #999;
-    line-height: 1.9;
-    display: flex;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity 0.35s ease, transform 0.35s ease;
-    cursor: default;
-    user-select: none;
-}
-
-.mono-line.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.token { display: inline-block; }
-.token.blue { color: #0000FF; }
-.token.dim  { color: #bbb; }
-
 .hp-name-wrap {
     margin-bottom: 16px;
 }
@@ -89,38 +62,21 @@ body {
     clip-path: inset(0 0% 0 0);
 }
 
-.roles-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+.hp-role {
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: #888;
+    display: block;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
     margin-bottom: 32px;
 }
 
-.role-item {
-    font-family: 'Inter', sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 1.4;
-    color: #ccc;
-    opacity: 0;
-    transform: translateY(6px);
-    transition: color 0.5s ease, font-weight 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
-    cursor: default;
-}
-
-.role-item.visible {
+.hp-role.visible {
     opacity: 1;
     transform: translateY(0);
-}
-
-.role-item.active {
-    color: #0000FF;
-    font-weight: 600;
-}
-
-.role-item.inactive {
-    color: #bbb;
-    font-weight: 400;
 }
 
 .hp-tagline {
