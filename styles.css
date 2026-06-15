@@ -43,30 +43,35 @@ body {
     color: #0000FF;
 }
 
-.hp-mono {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    font-weight: 400;
-    color: #888;
-    letter-spacing: 0.01em;
-    display: block;
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    margin-bottom: 4px;
+.mono-block {
+    margin-bottom: 28px;
 }
 
-.hp-mono.visible {
+.mono-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: #999;
+    line-height: 1.9;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    cursor: default;
+    user-select: none;
+}
+
+.mono-line.visible {
     opacity: 1;
     transform: translateY(0);
 }
 
-.hp-mono .blue { color: #0000FF; }
-.hp-mono .dim  { color: #bbb; }
+.token { display: inline-block; }
+.token.blue { color: #0000FF; }
+.token.dim  { color: #bbb; }
 
 .hp-name-wrap {
-    margin-top: 28px;
-    margin-bottom: 6px;
+    margin-bottom: 16px;
 }
 
 .hp-name {
@@ -77,46 +82,48 @@ body {
     line-height: 1.0;
     display: block;
     clip-path: inset(0 100% 0 0);
-    transition: clip-path 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: clip-path 0.75s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hp-name.revealed {
     clip-path: inset(0 0% 0 0);
 }
 
-.hp-role-wrap {
-    margin-top: 8px;
-    height: 28px;
-    position: relative;
-    overflow: hidden;
+.roles-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 32px;
 }
 
-.hp-role {
+.role-item {
     font-family: 'Inter', sans-serif;
     font-size: 18px;
     font-weight: 400;
-    color: #0000FF;
-    position: absolute;
-    top: 0;
-    left: 0;
-    white-space: nowrap;
+    line-height: 1.4;
+    color: #ccc;
     opacity: 0;
     transform: translateY(6px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: color 0.5s ease, font-weight 0.5s ease, opacity 0.5s ease, transform 0.5s ease;
+    cursor: default;
 }
 
-.hp-role.visible {
+.role-item.visible {
     opacity: 1;
     transform: translateY(0);
 }
 
-.hp-role.exit {
-    opacity: 0;
-    transform: translateY(-6px);
+.role-item.active {
+    color: #0000FF;
+    font-weight: 600;
+}
+
+.role-item.inactive {
+    color: #bbb;
+    font-weight: 400;
 }
 
 .hp-tagline {
-    margin-top: 32px;
     font-family: 'Lora', Georgia, serif;
     font-size: 17px;
     line-height: 1.6;
@@ -130,49 +137,6 @@ body {
 .hp-tagline.visible {
     opacity: 1;
     transform: translateY(0);
-}
-
-.hp-cursor {
-    display: inline-block;
-    width: 2px;
-    height: 13px;
-    background: #0000FF;
-    vertical-align: middle;
-    margin-left: 2px;
-    animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
-}
-
-.footer {
-    position: fixed;
-    bottom: 40px;
-    left: 64px;
-}
-
-.contact-links {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-}
-
-.contact-links a {
-    color: #111;
-    text-decoration: none;
-}
-
-.contact-links a:hover {
-    color: #0000FF;
-}
-
-.separator {
-    margin: 0 10px;
-    color: #bbb;
 }
 
 @media (max-width: 600px) {
@@ -189,60 +153,4 @@ body {
         right: 28px;
         gap: 20px;
     }
-
-    .footer {
-        left: 28px;
-        bottom: 28px;
-    }
-}
-
-.word-wrap {
-    margin-bottom: 14px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    cursor: default;
-}
-
-.cycling-word {
-    font-family: 'Inter', sans-serif;
-    font-size: 26px;
-    font-weight: 700;
-    color: #0000FF;
-    letter-spacing: -0.01em;
-    line-height: 1;
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(5px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.cycling-word.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.cycling-word.exit {
-    opacity: 0;
-    transform: translateY(-5px);
-}
-
-.cycling-word.decoding {
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.05em;
-}
-
-.hover-cue {
-    font-family: 'Inter', sans-serif;
-    font-size: 11px;
-    color: #ccc;
-    letter-spacing: 0.5px;
-    margin-left: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    align-self: center;
-}
-
-.hover-cue.visible {
-    opacity: 1;
 }

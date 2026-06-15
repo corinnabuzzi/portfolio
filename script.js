@@ -1,117 +1,144 @@
-// words the cycling element rotates through
-const words   = ['syntax', 'grammar', 'structure', 'logic', 'pattern', 'parsing', 'meaning', 'rule'];
-const GLYPHS  = '0123456789ABCDEF<>=+*{}[]_'; // character pool for the decode scramble (hex-ish on purpose)
+// character pool for the glitch scramble: lowercase letters + punctuation used in the mono block
+const CHARS = 'abcdefghijklmnopqrstuvwxyz_()→.';
 
-let wordIndex = 0;
-let wordTimer = null;
-let decoding  = false; // prevents hover trigger mid-animation
-let decodeIv  = null;
+// an array of arrays — 4, one per line of the mono block.
+// each inner array is a line broken into tokens: chunks that need independent styling or animation.
+// token properties: text (displayed on load), cls (color class), morphsTo (optional — glitches into this string after delay)
+const lineData = [
+    [
+        { text: 'reading',          cls: 'blue', morphsTo: 'parsing'      },
+        { text: '(',                cls: 'dim'                             },
+        { text: 'natural_language', cls: 'blue', morphsTo: 'morphology'   },
+        { text: ')',                cls: 'dim'                             },
+    ],
+    [
+        { text: 'grammar',          cls: 'blue', morphsTo: 'syntax_tree'  },
+        { text: ' → ',              cls: 'dim'                             },
+        { text: 'meaning',          cls: 'blue', morphsTo: 'structure'    },
+    ],
+    [
+        { text: 'found:',           cls: 'dim'                             },
+        { text: ' convergence',     cls: 'blue', morphsTo: ' pattern'     },
+        { text: '(linguistics',     cls: 'dim'                             },
+        { text: ', cs)',            cls: 'dim'                             },
+    ],
+    [
+        { text: 'resolve',          cls: 'blue'                            },
+        { text: '(',                cls: 'dim'                             },
+        { text: '"Corinna Buzzi"',  cls: 'blue'                            },
+        { text: ') →',              cls: 'dim'                             },
+    ],
+];
 
-const wordEl   = document.getElementById('cycling-word');
-const hoverCue = document.getElementById('hover-cue'); // the "hover to decode" label
+const MORPH_DELAY    = 2200; // ms after load before tokens start morphing
+const MORPH_DURATION = 600;  // duration of each individual glitch animation
+const MORPH_STEPS    = 12;
 
-// time-based scramble (contrast with glitchText which is step-based)
-// p = progress 0→1 over DUR ms; characters resolve left-to-right as p increases
-// adds .decoding class during animation (switches font to mono in CSS)
-function decodeAnimate(el, target, onDone) {
-    const DUR   = 680;
-    const start = Date.now();
-    el.classList.add('decoding');
-
+// step-based scramble — fires `steps` times over `duration`ms
+// characters resolve left-to-right as progress increases
+// punctuation left untouched throughout (scrambling a paren looks wrong)
+function glitchText(el, targetText, duration, steps) {
+    let step = 0;
     const iv = setInterval(() => {
-        const p   = Math.min(1, (Date.now() - start) / DUR);
-        let out   = '';
-        for (let i = 0; i < target.length; i++) {
-            const threshold = (i / target.length) * 0.8;
-            if (p >= threshold + 0.2) out += target[i]; // this character is ready to lock in
-            else out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
-        }
-        el.textContent = out;
-        if (p >= 1) { // done — snap to final string and fire callback
+        step++;
+        const progress = step / steps;
+        const chars = targetText.split('').map((ch, i) => {
+            if (progress > i / targetText.length + 0.2) return ch; // left-to-right reveal threshold
+            if (' ()→."_:,'.includes(ch)) return ch;
+            return CHARS[Math.floor(Math.random() * CHARS.length)];
+        });
+        el.textContent = chars.join('');
+        if (step >= steps) { // snap to final string on last frame
             clearInterval(iv);
-            el.classList.remove('decoding');
-            el.textContent = target;
-            if (onDone) onDone();
+            el.textContent = targetText;
         }
-    }, 40);
-
-    return iv; // returned so it can be cleared externally if needed (e.g. on reset)
+    }, duration / steps);
 }
 
-// sets word text and triggers the CSS fade-in transition
-// double rAF needed to let the browser register the class removal before re-adding
-function showWord(el, word) {
-    el.classList.remove('exit');
-    el.textContent = word;
-    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
-}
-
-// slides current word out, waits 380ms (exit transition), then shows next
-function nextWord() {
-    if (decoding) return; // don't cycle mid-hover
-    wordEl.classList.add('exit');
-    wordEl.classList.remove('visible');
-    setTimeout(() => {
-        wordIndex = (wordIndex + 1) % words.length;
-        showWord(wordEl, words[wordIndex]);
-    }, 380);
-}
-
-// on hover: decode current word to its hex ASCII representation, hold, then decode back
-// e.g. 'syntax' → '73 79 6E 74 61 78' → 'syntax'
-wordEl.parentElement.addEventListener('mouseenter', () => {
-    if (!wordEl.classList.contains('visible') || decoding) return;
-    decoding = true;
-    hoverCue.classList.remove('visible');
-
-    const currentWord = words[wordIndex];
-    const hexTarget   = [...currentWord]
-        .map(c => c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0'))
-        .join(' ');
-
-    decodeIv = decodeAnimate(wordEl, hexTarget, () => {
-        setTimeout(() => { // 400ms hold on the hex before decoding back
-            decodeIv = decodeAnimate(wordEl, currentWord, () => {
-                decoding = false;
-                hoverCue.classList.add('visible');
-            });
-        }, 400);
+// replays the glitch on mouseenter of the parent .mono-line
+// `running` prevents retriggering mid-animation
+function attachHoverGlitch(el, text) {
+    let running = false;
+    el.closest('.mono-line').addEventListener('mouseenter', () => {
+        if (running) return;
+        running = true;
+        glitchText(el, text, 400, 10);
+        setTimeout(() => { running = false; }, 600);
     });
-});
+}
 
-// reset + orchestrate the entrance sequence
+let roleTimer   = null;
+let currentRole = 0;
+
 function runSequence() {
-    if (wordTimer) clearInterval(wordTimer);
-    if (decodeIv)  clearInterval(decodeIv);
+    const monoBlock  = document.getElementById('mono-block');
+    const nameEl     = document.getElementById('name');
+    const rolesStack = document.getElementById('roles-stack');
+    const taglineEl  = document.getElementById('tagline');
+    const navEl      = document.getElementById('nav');
 
-    wordIndex = 0;
-    decoding  = false;
-
-    const nameEl    = document.getElementById('name');
-    const roleEl    = document.getElementById('role');
-    const taglineEl = document.getElementById('tagline');
-    const navEl     = document.getElementById('nav');
-
-    // reset all animated elements before running
-    wordEl.classList.remove('visible', 'exit', 'decoding');
-    wordEl.textContent = '';
-    hoverCue.classList.remove('visible');
+    // reset everything before running — matters if replay gets added later
+    monoBlock.innerHTML = '';
     nameEl.classList.remove('revealed');
-    roleEl.classList.remove('visible');
     taglineEl.classList.remove('visible');
     navEl.classList.remove('visible');
 
-    setTimeout(() => showWord(wordEl, words[0]),          200);
-    setTimeout(() => nameEl.classList.add('revealed'),    900);
-    setTimeout(() => roleEl.classList.add('visible'),    1400);
-    setTimeout(() => taglineEl.classList.add('visible'), 1800);
+    if (roleTimer) clearInterval(roleTimer);
+    currentRole = 0;
+
+    const roleEls = rolesStack.querySelectorAll('.role-item');
+    roleEls.forEach(el => el.classList.remove('visible', 'active', 'inactive'));
+
+    // lines built dynamically so morph timers can reference the actual DOM spans
+    lineData.forEach((tokens, li) => {
+        const line = document.createElement('div');
+        line.className = 'mono-line';
+
+        tokens.forEach(tok => {
+            const span = document.createElement('span');
+            span.className = 'token ' + (tok.cls || '');
+            span.textContent = tok.text;
+            line.appendChild(span);
+
+            if (tok.morphsTo) {
+                // glitch to final word after delay, then attach hover replay
+                setTimeout(() => {
+                    glitchText(span, tok.morphsTo, MORPH_DURATION, MORPH_STEPS);
+                    setTimeout(() => attachHoverGlitch(span, tok.morphsTo), MORPH_DURATION + 100);
+                }, MORPH_DELAY + li * 80); // stagger per line so they don't all fire at once
+            } else {
+                // no morph — just attach hover glitch directly
+                setTimeout(() => {
+                    attachHoverGlitch(span, tok.text);
+                }, MORPH_DELAY + MORPH_DURATION + 200);
+            }
+        });
+
+        monoBlock.appendChild(line);
+        setTimeout(() => line.classList.add('visible'), li * 260 + 150); // 260ms stagger per line
+    });
+
+    // name wipes in left-to-right via clip-path (see CSS)
+    setTimeout(() => nameEl.classList.add('revealed'), 1700);
+
+    // all three role items fade in together; active one highlighted in blue
+    // cycles every 2000ms indefinitely (no stop — contrast with the v5 single-role version)
     setTimeout(() => {
-        navEl.classList.add('visible');
-        hoverCue.classList.add('visible');
-    }, 2200);
-    setTimeout(() => {
-        wordTimer = setInterval(nextWord, 2200); // start cycling after everything's settled
-    }, 2600);
+        roleEls.forEach((el, i) => {
+            el.classList.add('visible');
+            el.classList.add(i === 0 ? 'active' : 'inactive');
+        });
+
+        roleTimer = setInterval(() => {
+            const prev = currentRole;
+            currentRole = (currentRole + 1) % roleEls.length;
+            roleEls[prev].classList.replace('active', 'inactive');
+            roleEls[currentRole].classList.replace('inactive', 'active');
+        }, 2000);
+    }, 2100);
+
+    setTimeout(() => taglineEl.classList.add('visible'), 2600);
+    setTimeout(() => navEl.classList.add('visible'), 3100);
 }
 
 runSequence();
