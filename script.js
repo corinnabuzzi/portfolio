@@ -1,10 +1,10 @@
 // words the cycling element rotates through
 const words   = ['syntax', 'grammar', 'structure', 'logic', 'pattern', 'parsing', 'meaning', 'rule'];
-const GLYPHS  = '0123456789ABCDEF<>=+*{}[]_'; // character pool for the decode scramble (hex-ish on purpose)
+const GLYPHS  = '0123456789ABCDEF<>=+*{}[]_';
 
 let wordIndex = 0;
 let wordTimer = null;
-let decoding  = false; // prevents hover trigger mid-animation
+let decoding  = false;
 let decodeIv  = null;
 
 const wordEl   = document.getElementById('cycling-word');
@@ -26,7 +26,7 @@ function decodeAnimate(el, target, onDone) {
             else out += GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
         }
         el.textContent = out;
-        if (p >= 1) { // snap to final string and fire callback
+        if (p >= 1) {
             clearInterval(iv);
             el.classList.remove('decoding');
             el.textContent = target;
@@ -34,7 +34,7 @@ function decodeAnimate(el, target, onDone) {
         }
     }, 40);
 
-    return iv; // returned so it can be cleared externally on reset
+    return iv;
 }
 
 // sets word text and triggers CSS fade-in
@@ -57,7 +57,6 @@ function nextWord() {
 }
 
 // on hover: decode current word to hex ASCII, hold 400ms, decode back
-// e.g. 'syntax' → '73 79 6E 74 61 78' → 'syntax'
 wordEl.parentElement.addEventListener('mouseenter', () => {
     if (!wordEl.classList.contains('visible') || decoding) return;
     decoding = true;
@@ -78,39 +77,11 @@ wordEl.parentElement.addEventListener('mouseenter', () => {
     });
 });
 
-// reset + orchestrate entrance sequence
-function runSequence() {
-    if (wordTimer) clearInterval(wordTimer);
-    if (decodeIv)  clearInterval(decodeIv);
-
-    wordIndex = 0;
-    decoding  = false;
-
-    const nameEl    = document.getElementById('name');
-    const roleEl    = document.getElementById('role');
-    const taglineEl = document.getElementById('tagline');
-    const navEl     = document.getElementById('nav');
-
-    // reset all animated elements before running
-    wordEl.classList.remove('visible', 'exit', 'decoding');
-    wordEl.textContent = '';
-    hoverCue.classList.remove('visible');
-    nameEl.classList.remove('revealed');
-    roleEl.classList.remove('visible');
-    taglineEl.classList.remove('visible');
-    navEl.classList.remove('visible');
-
-    setTimeout(() => showWord(wordEl, words[0]),          200);
-    setTimeout(() => nameEl.classList.add('revealed'),    900);
-    setTimeout(() => roleEl.classList.add('visible'),    1400);
-    setTimeout(() => taglineEl.classList.add('visible'), 1800);
+// start cycling immediately on load
+setTimeout(() => {
+    showWord(wordEl, words[0]);
+    hoverCue.classList.add('visible');
     setTimeout(() => {
-        navEl.classList.add('visible');
-        hoverCue.classList.add('visible');
-    }, 2200);
-    setTimeout(() => {
-        wordTimer = setInterval(nextWord, 2200); // start cycling after everything's settled
-    }, 2600);
-}
-
-runSequence();
+        wordTimer = setInterval(nextWord, 2200);
+    }, 2400);
+}, 200);

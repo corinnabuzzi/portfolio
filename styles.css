@@ -139,37 +139,36 @@ body {
     to { clip-path: inset(0 0% 0 0); }
 }
 
-.hp-role {
-    font-family: var(--font-sans);
+.hero-role {
     font-size: 17px;
     font-weight: 400;
     color: var(--gray);
-    display: block;
+    margin-bottom: 24px;
     opacity: 0;
-    transform: translateY(5px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease forwards;
+    animation-delay: 0.6s;
 }
 
-.hp-role.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.hp-tagline {
+.hero-tagline {
     font-family: var(--font-serif);
-    font-size: 17px;
-    line-height: 1.65;
-    color: var(--text);
-    max-width: 480px;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--gray);
+    margin-bottom: 48px;
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    animation: fadeUp 0.6s ease forwards;
+    animation-delay: 0.8s;
 }
 
-.hp-tagline.visible {
-    opacity: 1;
-    transform: translateY(0);
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .section-placeholder {
