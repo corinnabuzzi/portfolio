@@ -1,19 +1,17 @@
 // --- Cycling Word ---
 
 // words the cycling element rotates through
-const words       = ['syntax', 'grammar', 'structure', 'logic', 'pattern', 'parsing', 'meaning', 'rule'];
-const cyclingEl   = document.getElementById('cyclingWord');
-const hexChars    = '0123456789ABCDEF'; // character pool for the scramble
+const words = ['syntax', 'grammar', 'structure', 'logic', 'pattern', 'parsing', 'meaning', 'rule'];
+const cyclingEl = document.getElementById('cyclingWord');
+const hexChars = '0123456789ABCDEF'; // character pool for the scramble
 
-let currentIndex   = 0;
-let isHovering     = false; // prevents cycling mid-hover
-let cycleTimer     = null;
+let currentIndex = 0;
+let isHovering = false; // prevents cycling mid-hover
+let cycleTimer = null;
 let activeInterval = null;
 
 function toHexAscii(word) {
-    return Array.from(word)
-        .map(c => c.charCodeAt(0).toString(16).toUpperCase())
-        .join(' ');
+    return Array.from(word).map(c => c.charCodeAt(0).toString(16).toUpperCase()).join(' ');
 }
 
 // step-based scramble — reveals characters left-to-right as iterations increase
@@ -61,6 +59,8 @@ function stopCycleTimer() {
     }
 }
 
+startCycleTimer();
+
 // on mouseenter: scramble to hex ASCII and stop cycling
 // on mouseleave: scramble back to the word, then resume cycling
 cyclingEl.addEventListener('mouseenter', () => {
@@ -78,120 +78,197 @@ cyclingEl.addEventListener('mouseleave', () => {
     });
 });
 
-startCycleTimer();
 
+// --- Animated Graph (Obsidian-style) ---
 
-// --- Animated Graph ---
+const canvas   = document.getElementById('heroGraph');
+const graphCtx = canvas.getContext('2d');
 
-const canvas = document.getElementById('heroGraph');
-const ctx    = canvas.getContext('2d');
+const BLUE = '#0000FF';
 
-let width, height, time = 0;
+// generates the full node + edge set procedurally around a center point
+// three node kinds: center (hub), secondary (5 mid-ring), leaf (32 outer, distributed across 4 radial bands)
+// edges are also generated here, not hardcoded — so the graph looks slightly different on each load
+function buildGraph(cx, cy) {
+    const nodes = [];
+    const edges = [];
+    let id = 0;
 
-// coordinate system switch from v10: nodes now defined in polar coordinates
-// (angle in radians, dist in px from center) instead of relative rx/ry fractions of a bounding box
-// makes ring-based layouts much easier to reason about and tweak
-const nodes = [
-    { id: 0,  angle: 0,    dist: 0,   r: 8,   opacity: 0.9  }, // hub
-    { id: 1,  angle: 0.4,  dist: 62,  r: 5,   opacity: 0.7  }, // inner ring
-    { id: 2,  angle: 1.15, dist: 70,  r: 4.5, opacity: 0.6  },
-    { id: 3,  angle: 1.85, dist: 58,  r: 5.5, opacity: 0.65 },
-    { id: 4,  angle: 3.1,  dist: 75,  r: 4.5, opacity: 0.6  },
-    { id: 5,  angle: 4.2,  dist: 65,  r: 5,   opacity: 0.7  },
-    { id: 6,  angle: 5.4,  dist: 72,  r: 4,   opacity: 0.55 },
-    { id: 7,  angle: 0.85, dist: 125, r: 4,   opacity: 0.45 }, // mid ring
-    { id: 8,  angle: 1.55, dist: 118, r: 3.5, opacity: 0.4  },
-    { id: 9,  angle: 2.7,  dist: 132, r: 3.5, opacity: 0.4  },
-    { id: 10, angle: 3.8,  dist: 120, r: 3.5, opacity: 0.42 },
-    { id: 11, angle: 5.0,  dist: 128, r: 4,   opacity: 0.45 },
-    { id: 12, angle: 0.15, dist: 175, r: 3,   opacity: 0.3  }, // outer fringe
-    { id: 13, angle: 2.2,  dist: 168, r: 2.5, opacity: 0.25 },
-    { id: 14, angle: 3.5,  dist: 185, r: 3,   opacity: 0.3  },
-    { id: 15, angle: 5.6,  dist: 162, r: 2.5, opacity: 0.25 },
-];
+    const secondaryCount = 5;
+    const secondaryRadius = 80;
+    const leafCount = 32;
+    const leafBands = [130, 155, 172, 185]; // radial distances for leaf rings
 
-// [from, to, opacity] — inner ring has cross-edges (1→3, 4→6) for extra density
-const edges = [
-    [0, 1, 0.35], [0, 2, 0.30], [0, 3, 0.35], [0, 4, 0.30], [0, 5, 0.35], [0, 6, 0.30],
-    [1, 2, 0.22], [2, 3, 0.24], [3, 4, 0.20], [4, 5, 0.22], [5, 6, 0.20], [6, 1, 0.18],
-    [1, 3, 0.12], [4, 6, 0.12],
-    [1, 7, 0.18], [2, 7, 0.14], [2, 8, 0.16], [3, 9, 0.18], [5, 10, 0.16], [5, 11, 0.18], [6, 11, 0.15],
-    [7, 8, 0.14], [9, 10, 0.14], [10, 11, 0.13],
-    [1, 12, 0.10], [3, 13, 0.10], [4, 14, 0.10], [6, 15, 0.10],
-    [7, 12, 0.12], [8, 13, 0.10], [10, 14, 0.12], [11, 15, 0.12],
-];
-
-// each node gets independent sine-wave drift on x and y — unique speed, phase, amplitude
-const drifts = nodes.map((_, i) => ({
-    speedX: 0.15 + (i * 0.07) % 0.30,
-    speedY: 0.12 + (i * 0.09) % 0.25,
-    phaseX: i * 1.1,
-    phaseY: i * 0.8 + 0.5,
-    ampX:   3 + (i % 3) * 1.5,
-    ampY:   2.5 + (i % 4) * 1,
-}));
-
-// graph anchored to left side of viewport at 18% width, vertically centered
-let centerX = 0, centerY = 0;
-
-function resize() {
-    width   = canvas.width  = window.innerWidth;
-    height  = canvas.height = window.innerHeight;
-    centerX = width * 0.18;
-    centerY = height * 0.5;
-}
-
-// polar → cartesian conversion with breathe scale and per-node drift
-function getNodePos(node) {
-    const d       = drifts[node.id];
-    const breathe = Math.sin(time * 0.6) * 0.04 + 1;
-    const dist    = node.dist * breathe;
-    const baseX   = centerX + Math.cos(node.angle) * dist;
-    const baseY   = centerY + Math.sin(node.angle) * dist;
-    const ox      = Math.sin(time * d.speedX + d.phaseX) * d.ampX;
-    const oy      = Math.sin(time * d.speedY + d.phaseY) * d.ampY;
-    return { x: baseX + ox, y: baseY + oy };
-}
-
-function drawGraph() {
-    ctx.clearRect(0, 0, width, height);
-    const positions = nodes.map(n => getNodePos(n));
-
-    edges.forEach(([from, to, opacity]) => {
-        const a = positions[from];
-        const b = positions[to];
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(0, 0, 255, ${opacity})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
+    nodes.push({
+        id: id++, x: cx, y: cy, r: 9, kind: 'center',
+        phaseX: 0, phaseY: 0, speedX: 0.0007, speedY: 0.0009, driftAmp: 2,
     });
 
-    nodes.forEach((node, i) => {
-        const pos   = positions[i];
-        const pulse = node.id === 0 ? Math.sin(time * 1.2) * 0.15 + 0.85 : 1; // central node pulses
+    for (let i = 0; i < secondaryCount; i++) {
+        const angle = (i / secondaryCount) * Math.PI * 2 + 0.4;
+        const r     = secondaryRadius + (Math.random() * 20 - 10); // jitter radius slightly
+        nodes.push({
+            id: id++, x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r,
+            r: 5.5, kind: 'secondary',
+            phaseX: Math.random() * Math.PI * 2, phaseY: Math.random() * Math.PI * 2,
+            speedX: 0.0005 + Math.random() * 0.0004, speedY: 0.0005 + Math.random() * 0.0004,
+            driftAmp: 3 + Math.random() * 2,
+        });
+    }
 
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, node.r * pulse, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 0, 255, ${node.opacity})`;
-        ctx.fill();
+    for (let i = 0; i < leafCount; i++) {
+        const band        = leafBands[i % leafBands.length];
+        const angle       = (i / leafCount) * Math.PI * 2 + (Math.random() * 0.18 - 0.09);
+        const radialJitter = band + (Math.random() * 22 - 11);
+        const clampedR    = Math.min(radialJitter, 195); // hard cap to avoid overflow
+        nodes.push({
+            id: id++, x: cx + Math.cos(angle) * clampedR, y: cy + Math.sin(angle) * clampedR,
+            r: 2.5 + Math.random() * 1.5, kind: 'leaf',
+            phaseX: Math.random() * Math.PI * 2, phaseY: Math.random() * Math.PI * 2,
+            speedX: 0.0003 + Math.random() * 0.0005, speedY: 0.0003 + Math.random() * 0.0005,
+            driftAmp: 4 + Math.random() * 4,
+        });
+    }
 
-        if (node.id === 0) { // soft glow ring on central node
-            ctx.beginPath();
-            ctx.arc(pos.x, pos.y, node.r * 2.5 * pulse, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0, 0, 255, 0.07)';
-            ctx.fill();
+    // center to all secondaries
+    for (let i = 1; i <= secondaryCount; i++) {
+        edges.push({ a: 0, b: i, opacity: 0.14 });
+    }
+
+    // each secondary connects to its slice of leaves + adjacent secondary (ring mesh)
+    const leafStart        = secondaryCount + 1;
+    const leavesPerSecondary = Math.floor(leafCount / secondaryCount);
+
+    for (let s = 0; s < secondaryCount; s++) {
+        const sId = 1 + s;
+        const base = leafStart + s * leavesPerSecondary;
+        for (let l = 0; l < leavesPerSecondary + 1; l++) {
+            const lId = base + l;
+            if (lId < nodes.length) edges.push({ a: sId, b: lId, opacity: 0.1 });
         }
+        const nextS = 1 + ((s + 1) % secondaryCount);
+        edges.push({ a: sId, b: nextS, opacity: 0.12 });
+    }
+
+    // random leaf-to-leaf edges fill the silhouette
+    for (let l = leafStart; l < nodes.length - 1; l++) {
+        if (Math.random() < 0.45) {
+            const target = l + 1 + Math.floor(Math.random() * 3);
+            if (target < nodes.length) edges.push({ a: l, b: target, opacity: 0.08 });
+        }
+    }
+
+    // a few center-to-leaf shortcuts for extra density
+    for (let i = 0; i < 6; i++) {
+        const lId = leafStart + Math.floor(Math.random() * leafCount);
+        edges.push({ a: 0, b: lId, opacity: 0.08 });
+    }
+
+    return { nodes, edges };
+}
+
+let graphData = null;
+let graphW = 0, graphH = 0, graphDpr = 1;
+
+// DPR-aware resize — canvas sized at physical pixels, drawn at logical pixels via setTransform
+function resizeGraph() {
+    graphDpr = window.devicePixelRatio || 1;
+    graphW = canvas.offsetWidth  || window.innerWidth;
+    graphH = canvas.offsetHeight || window.innerHeight;
+    canvas.width = graphW * graphDpr;
+    canvas.height = graphH * graphDpr;
+    graphData = buildGraph(graphW * 0.18, graphH * 0.5); // graph anchored left at 18% width
+}
+
+resizeGraph();
+const graphStartTime = performance.now();
+
+function drawGraph(now) {
+    const elapsed = now - graphStartTime;
+    if (!graphData) { requestAnimationFrame(drawGraph); return; }
+
+    const cx = graphW * 0.18;
+    const cy = graphH * 0.5;
+
+    graphCtx.setTransform(graphDpr, 0, 0, graphDpr, 0, 0);
+    graphCtx.clearRect(0, 0, graphW, graphH);
+
+    // slow global breathe — all nodes scale slightly in and out together
+    const breathScale = 1 + 0.018 * Math.sin((elapsed / 4000) * Math.PI * 2);
+
+    const positions = graphData.nodes.map(function(n) {
+        const driftX = n.driftAmp * Math.sin(elapsed * n.speedX + n.phaseX);
+        const driftY = n.driftAmp * Math.sin(elapsed * n.speedY + n.phaseY);
+        const baseX = cx + (n.x - cx) * breathScale;
+        const baseY = cy + (n.y - cy) * breathScale;
+        return { x: baseX + driftX, y: baseY + driftY };
     });
+
+    for (let i = 0; i < graphData.edges.length; i++) {
+        const edge = graphData.edges[i];
+        const pa   = positions[edge.a];
+        const pb   = positions[edge.b];
+        graphCtx.beginPath();
+        graphCtx.moveTo(pa.x, pa.y);
+        graphCtx.lineTo(pb.x, pb.y);
+        graphCtx.strokeStyle = 'rgba(0,0,255,' + edge.opacity + ')';
+        graphCtx.lineWidth   = 0.5;
+        graphCtx.stroke();
+    }
+
+    for (let i = 0; i < graphData.nodes.length; i++) {
+        const node = graphData.nodes[i];
+        const pos  = positions[i];
+        const r    = node.r * breathScale;
+
+        if (node.kind === 'center') {
+            // animated radial gradient glow that pulses independently of breathe
+            var pulse = 0.5 + 0.5 * Math.sin((elapsed / 1800) * Math.PI * 2);
+            var glowR = r * (2.8 + pulse * 1.6);
+            var grd   = graphCtx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, glowR);
+            grd.addColorStop(0,   'rgba(0,0,255,' + (0.22 + pulse * 0.1)  + ')');
+            grd.addColorStop(0.4, 'rgba(0,0,255,' + (0.08 + pulse * 0.04) + ')');
+            grd.addColorStop(1,   'rgba(0,0,255,0)');
+            graphCtx.beginPath();
+            graphCtx.arc(pos.x, pos.y, glowR, 0, Math.PI * 2);
+            graphCtx.fillStyle = grd;
+            graphCtx.fill();
+
+            graphCtx.beginPath();
+            graphCtx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+            graphCtx.fillStyle = BLUE;
+            graphCtx.fill();
+
+        } else if (node.kind === 'secondary') {
+            // soft static glow ring + solid fill at 85% opacity
+            var grd2 = graphCtx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, r * 2.5);
+            grd2.addColorStop(0, 'rgba(0,0,255,0.15)');
+            grd2.addColorStop(1, 'rgba(0,0,255,0)');
+            graphCtx.beginPath();
+            graphCtx.arc(pos.x, pos.y, r * 2.5, 0, Math.PI * 2);
+            graphCtx.fillStyle = grd2;
+            graphCtx.fill();
+
+            graphCtx.beginPath();
+            graphCtx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+            graphCtx.fillStyle    = BLUE;
+            graphCtx.globalAlpha  = 0.85;
+            graphCtx.fill();
+            graphCtx.globalAlpha  = 1;
+
+        } else {
+            // leaves: plain fill at 60% opacity
+            graphCtx.beginPath();
+            graphCtx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+            graphCtx.fillStyle   = BLUE;
+            graphCtx.globalAlpha = 0.6;
+            graphCtx.fill();
+            graphCtx.globalAlpha = 1;
+        }
+    }
+
+    requestAnimationFrame(drawGraph);
 }
 
-function animate() {
-    time += 0.016;
-    drawGraph();
-    requestAnimationFrame(animate);
-}
-
-window.addEventListener('resize', resize);
-resize();
-animate();
+window.addEventListener('resize', resizeGraph);
+requestAnimationFrame(drawGraph);
