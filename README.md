@@ -183,6 +183,43 @@ v7 is a complete redesign, and a significant direction change (which i'll then t
 
 ![palette-card](assets/palette-card.png)
 
-**Background**: warm off-white, papery
-**Text**: near-black, inky-looking. 
-**Accent**: pure blue. i love it, and it really works when used sparingly
+- **Background**: warm off-white, papery
+- **Text**: near-black, inky-looking. 
+- **Accent**: pure blue. i love it, and it really works when used sparingly
+
+### Fonts
+
+**Inter + Lora**, classic serif/sans combo. Jetbrains Mono as mono font, same reason.
+
+Inter for UI/labels/headers; 
+Lora for body/reading
+
+Found out I'm really into typography, so here's other fonts taken into consideration, still possibly implemented:
+
+**Combos:** 
+
+- IBM Plex Sans + Serif + Mono
+- Geist — Sans, Mono (& Pixel) from Vercel, such a big fan!
+- DM — Sans + Serif Display
+- Instrument — Sans + Serif
+
+**Sans:**
+
+- Figtree
+- Sora
+- Jakarta Sans
+
+**Mono:**
+
+- Monaspace 
+- Cascadia 
+
+are fonts I really like, and have a bit more personality, which leads me to:
+
+**Serif:**
+
+- Fraunces, also more expressive, would work well with one of those afore-mentioned mono fonts.
+- Literata 
+- Spectral for more specific uses (like the logo!).
+
+
