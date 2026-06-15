@@ -210,7 +210,26 @@ v7's left-aligned single-page layout dropped in favor of a centered hero with a 
 
 now a very interesting and tumultuous implementation: the graph.
 
-### v9 —
+### v9 — animated graph added to hero
+
+- `<canvas class="hero-graph" id="heroGraph">` added to hero, absolutely positioned behind content (`z-index: 1` on `.hero-content`)
+- `.hero` gets `position: relative` and `overflow: hidden`
+- `.hero-graph`: full-viewport canvas, `pointer-events: none` so it doesn't interfere with interactions
+
+**script.js**
+
+- graph built with a fixed `nodeLayout` array: 10 nodes defined by relative position (`rx`, `ry` as fractions of a bounding box), radius, and opacity
+- `edges` array: `[from, to, opacity]` tuples
+- each node gets a `drifts` entry — independent sine-wave motion on x and y axes with unique speed, phase, amplitude
+- bounding box (`graphBox`) anchored to the left side of the viewport (`width * 0.06`), sized as a fraction of screen dimensions
+- `getNodePos`: computes final position combining base position, a global breathe (slow sine scale from center), and per-node drift
+- central node (id 0) pulses in size and has a soft glow ring
+- `resize()` recomputes canvas dimensions and graphBox on window resize
+- cycling word logic unchanged from v8c
+
+---
+
+### v10
 
 ---
 
