@@ -311,6 +311,14 @@ Finally 6 random hub-to-leaf shortcuts get added for extra visual weight near th
 
 ---
 
+### v16a — about page structure update
+
+- dividers and info block moved inside `.about-prose` rather than as separate sibling elements
+- `<footer>` added at the bottom with email, GitHub, LinkedIn
+- prose updated to definitive version (5 paragraphs, bold "Syntax is syntax. Structure is structure.")
+
+---
+
 ## Elements
 
 ---
