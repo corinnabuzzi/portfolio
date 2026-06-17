@@ -54,3 +54,19 @@
 .about-sep {
     color: var(--gray);
 }
+
+@media (max-width: 768px) {
+    .about {
+        padding: 80px 20px;
+    }
+
+    .about-title {
+        font-size: 38px;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-title {
+        font-size: 32px;
+    }
+}
