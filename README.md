@@ -317,6 +317,16 @@ Finally 6 random hub-to-leaf shortcuts get added for extra visual weight near th
 - `<footer>` added at the bottom with email, GitHub, LinkedIn
 - prose updated to definitive version (5 paragraphs, bold "Syntax is syntax. Structure is structure.")
 
+### v16b — about page styles + footer
+
+- two responsive breakpoints added to `about.css`: title scales to 38px at 768px, 32px at 480px; padding reduced to `80px 20px` on mobile
+- footer styles added to `styles.css`: centered, `border-top: 1px solid #d0cec9`, blue links, gray separator
+
+### v16c — remove duplicate contact links
+
+- `.about-contact` block removed — links now exist only in the footer
+- `.about-contact` and `.about-sep` CSS in `about.css` can be kept for now but are no longer in use
+
 ---
 
 ## Elements
