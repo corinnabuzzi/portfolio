@@ -1,0 +1,56 @@
+.about {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 120px 24px;
+}
+
+.about-title {
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 48px;
+}
+
+.about-prose p {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 24px;
+}
+
+.about-divider {
+    border: none;
+    border-top: 1px solid #d0cec9;
+    margin: 48px 0;
+}
+
+.about-info p {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 4px;
+}
+
+.about-contact {
+    font-size: 15px;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.about-contact a {
+    color: var(--blue);
+    text-decoration: none;
+}
+
+.about-contact a:hover {
+    text-decoration: underline;
+}
+
+.about-sep {
+    color: var(--gray);
+}
