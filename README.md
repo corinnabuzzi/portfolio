@@ -4,7 +4,7 @@ Author: Corinna Buzzi
 
 Deploy date:
 
-Link: corinnabuzzi.github.io/portfolio — not deployed yet.
+Link: [corinnabuzzi.github.io/portfolio — not deployed yet.](https://corinnabuzzi.github.io/portfolio/)
 
 Personal portfolio site. Built from scratch with vanilla HTML, CSS, and JavaScript, no frameworks or build tools.
 
